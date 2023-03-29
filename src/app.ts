@@ -22,7 +22,7 @@ if (config.env !== 'test') {
 }
 
 // Module for uploading files from the client.
-app.use(fileUpload({debug: true,}));
+app.use(fileUpload({debug: true,limits: { fileSize: 50 * 1024 * 1024 },}));
 
 // set security HTTP headers
 app.use(helmet());
