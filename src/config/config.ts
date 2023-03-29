@@ -21,6 +21,9 @@ const envVarsSchema = Joi.object()
     SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
     CLIENT_URL: Joi.string().required().description('Client url'),
+    CLIENT_ID: Joi.string().required(),
+    CLIENT_SECRET: Joi.string().required(),
+    REDIRECT_URI: Joi.string().required()
   })
   .unknown();
 
@@ -65,6 +68,11 @@ const config = {
     from: envVars.EMAIL_FROM,
   },
   clientUrl: envVars.CLIENT_URL,
+  google:{
+    clientId:envVars.CLIENT_ID,
+    clientSecret:envVars.CLIENT_SECRET,
+    redirectUri:envVars.REDIRECT_URI
+  }
 };
 
 export default config;

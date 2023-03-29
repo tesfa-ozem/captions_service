@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import { validate } from '../../modules/validate';
 import { authValidation, authController, auth } from '../../modules/auth';
+import {redirectCallBack,userAuthorization} from '../../modules/googleAuth'
 
 const router: Router = express.Router();
 
@@ -12,6 +13,12 @@ router.post('/forgot-password', validate(authValidation.forgotPassword), authCon
 router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
 router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
 router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
+
+
+// Google api auth routes
+
+router.get('/oauth2Callback', redirectCallBack);
+router.post('/redirectUri', userAuthorization);
 
 export default router;
 
