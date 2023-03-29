@@ -12,7 +12,7 @@ import { jwtStrategy } from './modules/auth';
 import { authLimiter } from './modules/utils';
 import { ApiError, errorConverter, errorHandler } from './modules/errors';
 import routes from './routes/v1';
-import ExpressFormidable from 'express-formidable';
+import fileUpload from 'express-fileupload';
 
 const app: Express = express();
 
@@ -20,6 +20,9 @@ if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
+
+// Module for uploading files from the client.
+app.use(fileUpload({debug: true,}));
 
 // set security HTTP headers
 app.use(helmet());
@@ -63,8 +66,5 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
-
-// Module for parsing form data, including multipart/form-data file upload.
-app.use(ExpressFormidable);
 
 export default app;

@@ -5,6 +5,7 @@ import catchAsync from '../utils/catchAsync';
 import ApiError from '../errors/ApiError';
 import * as captionsService from './captions.service';
 import * as storageService from '../storage/storage.service';
+//import {logger} from '../logger'
 
 
 /*Controller to create a caption*/
@@ -12,9 +13,10 @@ export const createCaption = catchAsync(async (req: Request, res: Response) => {
   if(!req.files){
     throw new ApiError(httpStatus.BAD_REQUEST,'No file uploaded')
   }
-  let uploadedFile = req.files
-  const fileUrl = await storageService.uploadedFile(uploadedFile,req.fields)
-  const reponse = await captionsService.createCaption(fileUrl,req.fields)
+  // logger.info(req.files[0])
+  const uploadedFile = req.files['media']
+  const fileUrl = await storageService.uploadedFile(uploadedFile,req.body)
+  const reponse = await captionsService.createCaption(fileUrl,req.body)
   res.status(httpStatus.CREATED).send(reponse);
 });
 

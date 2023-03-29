@@ -2,8 +2,9 @@ import express, { Router } from 'express';
 import authRoute from './auth.route';
 import docsRoute from './swagger.route';
 import userRoute from './user.route';
-import config from '../../config/config';
 import captionRoute from './captions.route';
+import config from '../../config/config';
+
 
 const router = express.Router();
 
