@@ -8,7 +8,10 @@ import ApiError from '../errors/ApiError';
 import tokenTypes from './token.types';
 import { AccessAndRefreshTokens, ITokenDoc } from './token.interfaces';
 import { IUserDoc } from '../user/user.interfaces';
-import { userService } from '../user';
+import { userService, User } from '../user';
+import {arrayToObject} from '../utils';
+
+// import { QueryResult } from '../paginate/paginate';
 
 /**
  * Generate token
@@ -56,6 +59,9 @@ export const saveToken = async (
     type,
     blacklisted,
   });
+
+  // throw new ApiError(httpStatus.BAD_REQUEST, 'Error creating token');
+
   return tokenDoc;
 };
 
@@ -134,3 +140,40 @@ export const generateVerifyEmailToken = async (user: IUserDoc): Promise<string> 
   await saveToken(verifyEmailToken, user.id, expires, tokenTypes.VERIFY_EMAIL);
   return verifyEmailToken;
 };
+
+export const getGoogleTokens = async (): Promise<any> => {
+  const currentTime = moment();
+  const auth_user = 'google_auth_user';
+  let token;
+
+  try {
+    const user = await User.findOne({ name: auth_user });
+
+    if (!user) {
+      throw new Error(`No user found with name: ${auth_user}`);
+    }
+
+    const userId = user._id;
+    // const findTokens = util.promisify(Token.find.bind(Token));
+
+    const tokenArray = await Token.find({
+      user: userId,
+      expires: { $gte: currentTime },
+      $or: [
+        { type: tokenTypes.GOOGLE_ACCESS },
+        { type: tokenTypes.GOOGLE_REFRESH }
+      ]
+    })
+    
+    token = arrayToObject(tokenArray,'type');
+    
+    
+  } catch (err: any) {
+    throw new Error(`Error fetching Google tokens: ${err.message}`);
+  }
+
+  return token;
+};
+
+
+

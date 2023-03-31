@@ -1,6 +1,10 @@
 import logger from '../logger/logger';
 import { google } from 'googleapis';
 import config from '../../config/config';
+import { User } from '../user';
+import { tokenTypes, Token } from '../token';
+import moment from 'moment';
+
 
 const CLIENT_ID = config.google.clientId;
 const CLIENT_SECRET = config.google.clientSecret;
@@ -29,18 +33,61 @@ export const getRedirectUrl = async (): Promise<string> => {
 
 export const generateGoogleAuthTokens = async (authCode: any): Promise<any> => {
     try {
-       logger.warn(authCode);
-        const { tokens } = await oauth2client.getToken(authCode);
-        const googleAccessToken = tokens.access_token;
-        const refreshToken = tokens.refresh_token;
 
-        //Todo save the access and refresh tokens 
-        return {
-            "access":googleAccessToken,
-            "refresh": refreshToken
+        const { tokens } = await oauth2client.getToken(authCode);
+        const googleAccessToken = tokens['access_token'];
+        const refreshToken = tokens['refresh_token'] ;
+        const token_expiry_ms = tokens.expiry_date as number
+        const date = new Date(token_expiry_ms);
+        const expiry_date = moment(date);
+        // const expiry = moment().add(config.jwt.refreshExpirationDays, 'days');
+        // Todo add validation for missing user
+            
+        const google_auth_user = await User.findOne({ name: 'google_auth_user' })
+
+        if (refreshToken && googleAccessToken) {
+            const refreshTokenUpdateResult = await Token.findOneAndUpdate(
+                { type: tokenTypes.GOOGLE_REFRESH, user: google_auth_user!.id },
+                {
+                    token: refreshToken,
+                    user: google_auth_user!.id,
+                    expires: expiry_date,
+                    type: tokenTypes.GOOGLE_REFRESH,
+                },
+                {
+                    new: true,
+                    upsert: true, // Make this update into an upsert
+                }
+            );
+
+            const googleAccessTokenUpdateResult = await Token.findOneAndUpdate(
+                { type: tokenTypes.GOOGLE_ACCESS, user: google_auth_user!.id },
+                {
+                    token: googleAccessToken,
+                    user: google_auth_user!.id,
+                    expires: expiry_date,
+                    type: tokenTypes.GOOGLE_ACCESS,
+                },
+                {
+                    new: true,
+                    upsert: true, // Make this update into an upsert
+                }
+            );
+
+            if (refreshTokenUpdateResult && googleAccessTokenUpdateResult) {
+                logger.info("Tokens updated");
+            } else {
+                logger.error("Failed to update tokens");
+            }
+
+        } else {
+            if (googleAccessToken)
+                await oauth2client.revokeToken(googleAccessToken);
+            throw Error("Failed to get refresh token, access token has been revoked. Try again")
         }
     } catch (error: any) {
-        logger.warn(error.toString());
-        return {"error":error.toString()}
+
+        return { "error": error.toString() }
     }
 }
+
