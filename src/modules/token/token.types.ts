@@ -4,5 +4,5 @@ export default {
   RESET_PASSWORD: 'resetPassword',
   VERIFY_EMAIL: 'verifyEmail',
   GOOGLE_ACCESS: 'googleAcces',
-  GOOGLE_REFRESH: 'googleRefresh'
+  GOOGLE_REFRESH: 'googleRefresh',
 };

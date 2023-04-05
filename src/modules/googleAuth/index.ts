@@ -1,3 +1,4 @@
-import {redirectCallBack,userAuthorization} from './google.auth.controllers';
+import { redirectCallBack, userAuthorization } from './google.auth.controllers';
+import { saveGoogleTokens } from './google.auth.service';
 
-export {redirectCallBack,userAuthorization}
+export { redirectCallBack, userAuthorization, saveGoogleTokens };

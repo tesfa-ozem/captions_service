@@ -5,18 +5,17 @@ import catchAsync from '../utils/catchAsync';
 import ApiError from '../errors/ApiError';
 import * as captionsService from './captions.service';
 import * as storageService from '../storage/storage.service';
-//import {logger} from '../logger'
+// import {logger} from '../logger'
 
-
-/*Controller to create a caption*/
+/* Controller to create a caption */
 export const createCaption = catchAsync(async (req: Request, res: Response) => {
-  if(!req.files){
-    throw new ApiError(httpStatus.BAD_REQUEST,'No file uploaded')
+  if (!req.files) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'No file uploaded');
   }
   // logger.info(req.files[0])
-  const uploadedFile = req.files['media']
-  const fileUrl = await storageService.uploadedFile(uploadedFile,req.body)
-  const reponse = await captionsService.createCaption(fileUrl,req.body)
+  const uploadedFile = req.files['media'];
+  const fileUrl = await storageService.uploadFile(uploadedFile, req.body);
+  const reponse = await captionsService.createCaption(fileUrl, req.body);
   res.status(httpStatus.CREATED).send(reponse);
 });
 
@@ -28,7 +27,6 @@ export const createCaption = catchAsync(async (req: Request, res: Response) => {
 //   res.send(result);
 // });
 
-
 // /*Controller to update captions*/
 // export const getUsers = catchAsync(async (req: Request, res: Response) => {
 //   if (typeof req.params['userId'] === 'string') {
@@ -36,7 +34,6 @@ export const createCaption = catchAsync(async (req: Request, res: Response) => {
 //     res.send(user);
 //   }
 // });
-
 
 // export const deleteUser = catchAsync(async (req: Request, res: Response) => {
 //   if (typeof req.params['userId'] === 'string') {

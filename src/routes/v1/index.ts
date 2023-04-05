@@ -5,7 +5,6 @@ import userRoute from './user.route';
 import captionRoute from './captions.route';
 import config from '../../config/config';
 
-
 const router = express.Router();
 
 interface IRoute {
@@ -24,8 +23,8 @@ const defaultIRoute: IRoute[] = [
   },
   {
     path: '/captions',
-    route: captionRoute
-  }
+    route: captionRoute,
+  },
 ];
 
 const devIRoute: IRoute[] = [

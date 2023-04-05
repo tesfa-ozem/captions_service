@@ -22,7 +22,7 @@ const tokenSchema = new mongoose.Schema<ITokenDoc, ITokenModel>(
         tokenTypes.RESET_PASSWORD,
         tokenTypes.VERIFY_EMAIL,
         tokenTypes.GOOGLE_ACCESS,
-        tokenTypes.GOOGLE_REFRESH
+        tokenTypes.GOOGLE_REFRESH,
       ],
       required: true,
     },

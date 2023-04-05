@@ -9,7 +9,7 @@ import tokenTypes from './token.types';
 import { AccessAndRefreshTokens, ITokenDoc } from './token.interfaces';
 import { IUserDoc } from '../user/user.interfaces';
 import { userService, User } from '../user';
-import {arrayToObject} from '../utils';
+import { arrayToObject } from '../utils';
 
 // import { QueryResult } from '../paginate/paginate';
 
@@ -142,7 +142,7 @@ export const generateVerifyEmailToken = async (user: IUserDoc): Promise<string> 
 };
 
 export const getGoogleTokens = async (): Promise<any> => {
-  const currentTime = moment();
+  // const currentTime = moment();
   const auth_user = 'google_auth_user';
   let token;
 
@@ -158,22 +158,17 @@ export const getGoogleTokens = async (): Promise<any> => {
 
     const tokenArray = await Token.find({
       user: userId,
-      expires: { $gte: currentTime },
-      $or: [
-        { type: tokenTypes.GOOGLE_ACCESS },
-        { type: tokenTypes.GOOGLE_REFRESH }
-      ]
-    })
-    
-    token = arrayToObject(tokenArray,'type');
-    
-    
+      // expires: { $gte: currentTime },
+      $or: [{ type: tokenTypes.GOOGLE_ACCESS }, { type: tokenTypes.GOOGLE_REFRESH }],
+    });
+    if (!tokenArray || tokenArray.length < 1) {
+      throw new Error(`No tokens found`);
+    }
+    token = arrayToObject(tokenArray, 'type');
+    // logger.info(JSON.stringify(tokenArray));
   } catch (err: any) {
     throw new Error(`Error fetching Google tokens: ${err.message}`);
   }
 
   return token;
 };
-
-
-

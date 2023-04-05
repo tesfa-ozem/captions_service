@@ -31,3 +31,9 @@ export interface AccessAndRefreshTokens {
   access: TokenPayload;
   refresh: TokenPayload;
 }
+
+export type AccessTokenUpdate = Omit<IToken, 'user' | 'type' | 'blacklisted'>;
+
+export type TokenFilter = {
+  type: string;
+};

@@ -9,4 +9,4 @@ function arrayToObject<T, K extends keyof T>(arr: T[], keyField: K): Record<stri
   }, {});
 }
 
-export { catchAsync, pick, authLimiter,arrayToObject };
+export { catchAsync, pick, authLimiter, arrayToObject };
