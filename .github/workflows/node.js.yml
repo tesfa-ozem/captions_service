@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  IMAGE_NAME: captions-service-image
-  REGISTRY: mainregistry.azurecr.io
-
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
