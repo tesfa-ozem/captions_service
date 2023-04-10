@@ -14,33 +14,33 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: "Checkout code"
-      uses: actions/checkout@main
-    - name: "Login via Azure CLI"
+      - name: "Checkout code"
+        uses: actions/checkout@main
+      - name: "Login via Azure CLI"
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: "Login to Azure Container Registry"
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ env.REGISTRY }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: "Login to Azure Container Registry"
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - name: "Build Docker image"
-      run: |
-        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-    - name: "Push Docker image to Azure Container Registry"
-      run: |
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-    - name: "Deploy to Azure Container Instance"
-      uses: azure/container-instance-deploy@v1
-      with:
-        resource-group-name: rnd
-        dns-label-name: captions-service
-        container-name: captions-service-container
-        image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-        container-ports: 8000
-        os-type: Linux
-        cpu: 1
-        memory: 1.5
+      - name: "Build Docker image"
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+      - name: "Push Docker image to Azure Container Registry"
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      - name: "Deploy to Azure Container Instance"
+        uses: azure/container-instance-deploy@v1
+        with:
+          resource-group-name: rnd
+          dns-label-name: captions-service
+          container-name: captions-service-container
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          container-ports: 8000
+          os-type: Linux
+          cpu: 1
+          memory: 1.5
