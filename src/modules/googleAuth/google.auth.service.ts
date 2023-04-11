@@ -57,9 +57,14 @@ export const saveGoogleTokens = async (
   googleAccessToken: string,
   expiry_date: any
 ): Promise<void> => {
+  try{
+
+
   const google_auth_user = await User.findOne({ name: 'google_auth_user' });
+  
   let refreshTokenUpdateResult;
   let googleAccessTokenUpdateResult;
+  logger.info(`${googleRefreshToken} - ${googleAccessToken} `)
   if (googleRefreshToken) {
     refreshTokenUpdateResult = await Token.findOneAndUpdate(
       { type: tokenTypes.GOOGLE_REFRESH, user: google_auth_user!.id },
@@ -99,5 +104,7 @@ export const saveGoogleTokens = async (
     } else {
       throw Error('Failed to update token.');
     }
+  }}catch(error:any){
+    logger.error(JSON.stringify(error))
   }
 };

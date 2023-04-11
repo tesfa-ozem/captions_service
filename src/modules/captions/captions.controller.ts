@@ -14,9 +14,9 @@ export const createCaption = catchAsync(async (req: Request, res: Response) => {
   }
   // logger.info(req.files[0])
   const uploadedFile = req.files['media'];
-  const fileUrl = await storageService.uploadFile(uploadedFile, req.body);
-  const reponse = await captionsService.createCaption(fileUrl, req.body);
-  res.status(httpStatus.CREATED).send(reponse);
+  const drive_response = await storageService.uploadFile(uploadedFile, req.body);
+  await captionsService.createCaption(drive_response, req.body);
+  res.status(httpStatus.CREATED).send(drive_response);
 });
 
 // /*Controller to fetch captions*/

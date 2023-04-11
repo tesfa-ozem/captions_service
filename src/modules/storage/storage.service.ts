@@ -51,8 +51,6 @@ export async function uploadFile(file: any, fields: any): Promise<any> {
     throw new ApiError(401, 'No valid tokens found');
   }
 
-  logger.info(JSON.stringify(file.data));
-
   const accessToken = tokens.googleAcces.token;
   const refreshToken = tokens.googleRefresh.token;
 
@@ -75,19 +73,24 @@ export async function uploadFile(file: any, fields: any): Promise<any> {
       },
     });
 
-    logger.info(`File uploaded: ${response.id}`);
+    
   } catch (err: any) {
+    // logger.error(JSON.stringify(err.response.data.error))
     if (err.code === 401 && err.errors && err.errors[0].reason === 'authError') {
-      // Access token has expired, so refresh it and try again
+      //Access token has expired, so refresh it and try again
       const credentials: any = await oauth2Client.refreshAccessToken();
-      const token_expiry_ms = credentials.expiry_date as number;
+      const token_expiry_ms = credentials.credentials.expiry_date as number;
       const date = new Date(token_expiry_ms);
       const expiry_date = moment(date);
-      await saveGoogleTokens(credentials.refresh_token, credentials.access_token, expiry_date);
+   
+      await saveGoogleTokens(
+        credentials.credentials.refresh_token, 
+        credentials.credentials.access_token, 
+        expiry_date);
       // Retry with the new token
-      console.log(JSON.stringify(credentials));
-      const drive = await authorizeDriveClient(credentials.access_token, credentials.refresh_token);
-      response = await drive.files.create({
+      
+      const new_drive = await authorizeDriveClient(credentials.access_token, credentials.refresh_token);
+      response = await new_drive.files.create({
         requestBody: {
           name: fields.name,
           mimeType: file.mimetype,
@@ -99,11 +102,11 @@ export async function uploadFile(file: any, fields: any): Promise<any> {
           body: Readable.from(stream),
         },
       });
-      console.log(response);
     } else {
-      throw new ApiError(500, `Error uploading file: ${err.message}`);
+      throw new ApiError(err.code,`Error uploading file: ${err.response.data.error}`);
     }
   }
+  logger.info(`File uploaded: ${JSON.stringify(response)}`);
 
   return response;
 }
