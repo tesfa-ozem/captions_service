@@ -79,17 +79,19 @@ export async function uploadFile(file: any, fields: any): Promise<any> {
     if (err.code === 401 && err.errors && err.errors[0].reason === 'authError') {
       //Access token has expired, so refresh it and try again
       const credentials: any = await oauth2Client.refreshAccessToken();
+      const new_refreshToken = credentials.credentials.refresh_token;
+      const new_accessToken =credentials.credentials.access_token;
       const token_expiry_ms = credentials.credentials.expiry_date as number;
       const date = new Date(token_expiry_ms);
       const expiry_date = moment(date);
    
       await saveGoogleTokens(
-        credentials.credentials.refresh_token, 
-        credentials.credentials.access_token, 
+        new_refreshToken, 
+        new_accessToken, 
         expiry_date);
       // Retry with the new token
       
-      const new_drive = await authorizeDriveClient(credentials.access_token, credentials.refresh_token);
+      const new_drive = await authorizeDriveClient(new_accessToken, new_refreshToken);
       response = await new_drive.files.create({
         requestBody: {
           name: fields.name,
