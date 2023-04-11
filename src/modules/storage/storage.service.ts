@@ -6,6 +6,7 @@ import config from '../../config/config';
 import { tokenService } from '../token';
 import ApiError from '../errors/ApiError';
 import { saveGoogleTokens } from '../googleAuth';
+import {NewCaption} from '../captions/captions.interfaces'
 // import ApiError from '../errors/ApiError';
 // import httpStatus from 'http-status';
 
@@ -40,7 +41,7 @@ async function authorizeDriveClient(accessToken: string, refreshToken: string): 
  * @returns {Promise<google.drive.Schema$File>} The uploaded file
  * @throws {ApiError} If there is an error uploading the file
  */
-export async function uploadFile(file: any, fields: any): Promise<any> {
+export async function uploadFile(file: any, fields: any): Promise<NewCaption> {
   if (!file || !fields) {
     throw new ApiError(400, 'Missing required parameters');
   }
@@ -71,6 +72,7 @@ export async function uploadFile(file: any, fields: any): Promise<any> {
         mimeType: file.mimetype,
         body: Readable.from(stream),
       },
+      fields: "id,name,mimeType,description,parents,webContentLink,webViewLink,iconLink,createdTime,modifiedTime,size"
     });
 
     
@@ -108,9 +110,18 @@ export async function uploadFile(file: any, fields: any): Promise<any> {
       throw new ApiError(err.code,`Error uploading file: ${err.response.data.error}`);
     }
   }
-  logger.info(`File uploaded: ${JSON.stringify(response)}`);
+  logger.info(`File uploaded: ${JSON.stringify(response.data)}`);
 
-  return response;
+  // Format the google drive response to exclude id and resign it to
+  // driveId
+  const reponseObject = {
+    ...response.data,
+    driveId:response.data.id
+  }
+
+  delete reponseObject.id
+
+  return reponseObject;
 }
 
 // export const isAccessTokenExpired = async (oauth2Client: any): Promise<void> => {

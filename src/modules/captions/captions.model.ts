@@ -1,10 +1,22 @@
 import mongoose from 'mongoose';
 import { ICaptionDoc, ICaptionModel } from './captions.interfaces';
-import { mediaTypes } from '../../config/mediaType';
+// import { mediaTypes } from '../../config/mediaType';
+import toJSON from '../toJSON/toJSON';
+import paginate from '../paginate/paginate';
 
 const captionSchema = new mongoose.Schema<ICaptionDoc, ICaptionModel>(
   {
+    driveId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    mimeType: {
       type: String,
       required: true,
       trim: true,
@@ -12,33 +24,41 @@ const captionSchema = new mongoose.Schema<ICaptionDoc, ICaptionModel>(
     description: {
       type: String,
       required: true,
-      unique: true,
-      trim: true,
+      trim: false,
     },
-    is_active: {
-      type: Boolean,
-      default: false,
-    },
-    createdAt: {
-      type: String,
-    },
-    updatedAt: {
-      type: String,
-    },
-    mediaUrl: {
-      type: String,
-      trim: true,
+    parents: {
+      type: [String],
       required: true,
-      unique: true,
     },
-    uploadedBy: {
+    webContentLink: {
       type: String,
+      required: true,
       trim: true,
     },
-    mediaType: {
+    webViewLink: {
       type: String,
-      enum: mediaTypes,
-      default: 'video',
+      required: true,
+      trim: true,
+    },
+    iconLink: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    createdTime: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    modifiedTime: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    size: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
   {
@@ -46,6 +66,9 @@ const captionSchema = new mongoose.Schema<ICaptionDoc, ICaptionModel>(
   }
 );
 
+// add plugin that converts mongoose to json
+captionSchema.plugin(toJSON);
+captionSchema.plugin(paginate);
 const Caption = mongoose.model<ICaptionDoc, ICaptionModel>('Caption', captionSchema);
 
 export default Caption;
