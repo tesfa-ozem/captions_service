@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import ApiError from '../errors/ApiError';
+import Joi from 'joi'
 
 /**
  * Middleware to validate file uploads
@@ -25,4 +26,15 @@ export const validateUpload = (req: Request, _res: Response, next: NextFunction)
 
   // If all checks pass, proceed to the next middleware
   return next();
+};
+
+export const getCaptions = {
+  query: Joi.object().keys({
+    name: Joi.string(),
+    role: Joi.string(),
+    sortBy: Joi.string(),
+    projectBy: Joi.string(),
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
+  }),
 };

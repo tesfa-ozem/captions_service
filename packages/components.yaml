@@ -18,6 +18,45 @@ components:
         email: fake@example.com
         name: fake name
         role: user
+    Captions:
+      type: object
+      properties:
+        id:
+          type: string
+        driveId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        parents:
+          type: array
+        webContentLink:
+          type: string
+        webViewLink:
+          type: string
+        iconLink:
+          type: string
+        createdTime:
+          type: string
+        modifiedTime:
+          type: string
+        size:
+          type: string
+
+      example:
+        driveId: 1-gdovrs2uIG1yKrm4FVsvAbz_yV87mc5
+        name: Salvation Prayer
+        mimeType: video/mp4
+        description: 11th April 2023 salvation prayer
+        parents: ["0ABSvhgsIyWI4Uk9PVA"]
+        webContentLink: https://drive.google.com/uc?id=1-gdovrs2uIG1yKrm4FVsvAbz_yV87mc5&export=download
+        webViewLink: https://drive.google.com/file/d/1-gdovrs2uIG1yKrm4FVsvAbz_yV87mc5/view?usp=drivesdk
+        iconLink: https://drive-thirdparty.googleusercontent.com/16/type/video/mp4
+        createdTime: 2023-04-11T22:39:53.092Z
+        modifiedTime: 2023-04-11T22:39:53.092Z
+        size: "39226473"
+        id: 6435e1ba32c7a1b8055fb959
 
     Token:
       type: object

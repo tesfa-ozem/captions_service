@@ -2,7 +2,7 @@
 // import mongoose from 'mongoose';
 import Caption from './captions.model';
 // import ApiError from '../errors/ApiError';
-// import { IOptions, QueryResult } from '../paginate/paginate';
+import { IOptions, QueryResult } from '../paginate/paginate';
 // import logger from '../logger/logger';
 import { NewCaption,ICaptionDoc } from './captions.interfaces';
 
@@ -15,3 +15,14 @@ export const createCaption = async (captionRecord: NewCaption): Promise<ICaption
   
   return Caption.create(captionRecord);
 };
+
+/**
+ * Query for captions
+ * @param {Object} filter - Mongo filter
+ * @param {Object} options - Query options
+ * @returns {Promise<QueryResult>}
+ */
+export const queryCaptions = async (filter: Record<string, any>, options: IOptions): Promise<QueryResult> =>{
+  const captions = await Caption.paginate(filter, options);
+  return captions;
+}
